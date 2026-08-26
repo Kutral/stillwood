@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* The Pages build is rooted in pages/ with src/ outside the default scan
+   roots, so Tailwind v4's auto-detection would drop every utility class
+   used by the game. Explicitly point the scanner at the source tree. */
+@source "../src/**/*.{ts,tsx,html}";
+
 @theme {
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
