@@ -1,0 +1,13 @@
+node_modules/
+dist/
+pages-dist/
+.output/
+.vercel/
+.tanstack/
+screenshots/
+artifacts/
+.grok/
+.github/workflows/*.log
+dev-server.log
+pages-build.log
+*.local
