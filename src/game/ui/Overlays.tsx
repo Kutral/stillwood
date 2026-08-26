@@ -263,10 +263,10 @@ function Stick() {
   };
 
   return (
-    <div className="pointer-events-auto absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-[max(1rem,env(safe-area-inset-left))]">
+    <div className="pointer-events-auto absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-[max(1rem,env(safe-area-inset-left))] touch-none">
       <div
         ref={pad}
-        className="relative size-32 rounded-full border border-border bg-surface/50 backdrop-blur-sm"
+        className="relative size-32 rounded-full border border-border bg-surface/50 backdrop-blur-sm touch-none"
         onPointerDown={(e) => {
           pid.current = e.pointerId;
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -278,9 +278,24 @@ function Stick() {
         }}
         onPointerUp={clear}
         onPointerCancel={clear}
+        onTouchStart={(e) => {
+          const t = e.touches[0];
+          if (!t) return;
+          pid.current = -1;
+          apply(t.clientX, t.clientY);
+        }}
+        onTouchMove={(e) => {
+          if (pid.current !== -1) return;
+          const t = e.touches[0];
+          if (!t) return;
+          e.preventDefault();
+          apply(t.clientX, t.clientY);
+        }}
+        onTouchEnd={clear}
+        onTouchCancel={clear}
       >
         <div
-          className="absolute left-1/2 top-1/2 size-12 rounded-full bg-primary/90"
+          className="pointer-events-none absolute left-1/2 top-1/2 size-12 rounded-full bg-primary/90"
           style={{
             transform: `translate(calc(-50% + ${knob.x * 36}px), calc(-50% + ${knob.y * 36}px))`,
           }}
@@ -292,17 +307,26 @@ function Stick() {
 
 function BrakePedal() {
   return (
-    <div className="pointer-events-auto absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))]">
+    <div className="pointer-events-auto absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] touch-none">
       <button
         type="button"
         aria-label="Brake"
-        className="flex size-20 items-center justify-center rounded-full border border-border bg-surface/50 font-sans text-xs uppercase tracking-[0.18em] text-fg backdrop-blur-sm active:bg-surface"
+        className="flex size-20 select-none items-center justify-center rounded-full border border-border bg-surface/50 font-sans text-xs uppercase tracking-[0.18em] text-fg backdrop-blur-sm active:bg-surface touch-none"
         onPointerDown={(e) => {
           e.currentTarget.setPointerCapture(e.pointerId);
           setTouchBrake(1);
         }}
         onPointerUp={() => setTouchBrake(0)}
         onPointerCancel={() => setTouchBrake(0)}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          setTouchBrake(1);
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          setTouchBrake(0);
+        }}
+        onTouchCancel={() => setTouchBrake(0)}
       >
         Brake
       </button>
